@@ -2,7 +2,8 @@ const canvas = document.getElementById('snake-frame');
 const ctx = canvas.getContext('2d');
 const barry = canvas.getContext('2d');
 var scoreContain = document.getElementById('score');
-//ctx.fillStyle = 'rgb(23, 184, 31)';
+
+ctx.fillStyle = 'rgb(23, 184, 31)';
 //ctx.rect(200, 200, 16, 16);
 //ctx.fill();
 
@@ -16,8 +17,9 @@ var x = 208, y = 208;
 var dx = 0, dy = 0;
 var bx, by;
 var score = 0;
+var len;
 
-var tail = [];
+var tail = [[x, y-16], [x, y-32]];
 
 function spawn() {
     bx = Math.floor(Math.random() * 400);
@@ -29,7 +31,6 @@ function spawn() {
     while (by % 16 != 0) {
         by = Math.floor(Math.random() * 400);
     }
-
     barry.fillRect(bx, by, 16, 16);
 } spawn();
 
