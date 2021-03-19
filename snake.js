@@ -1,10 +1,10 @@
 const canvas = document.getElementById('snake-frame');
 const ctx = canvas.getContext('2d');
 const barry = canvas.getContext('2d');
-
-ctx.fillStyle = 'rgb(23, 184, 31)';
-ctx.rect(200, 200, 16, 16);
-ctx.fill();
+var scoreContain = document.getElementById('score');
+//ctx.fillStyle = 'rgb(23, 184, 31)';
+//ctx.rect(200, 200, 16, 16);
+//ctx.fill();
 
 function filling(x, y) {
     ctx.fillRect(x, y, 16, 16);
@@ -12,30 +12,35 @@ function filling(x, y) {
 function clearing(x,y) {
     ctx.clearRect(x, y, 16, 16);
 }
-var x = 200, y = 200;
+var x = 208, y = 208;
 var dx = 0, dy = 0;
 var bx, by;
+var score = 0;
 
 var tail = [];
 
 function spawn() {
-    while (bx % 4 != 0) {
+    bx = Math.floor(Math.random() * 400);
+    while (bx % 16 != 0) {
         bx = Math.floor(Math.random() * 400);
     }
-    while (by % 4 != 0) {
+
+    by = Math.floor(Math.random() * 400);
+    while (by % 16 != 0) {
         by = Math.floor(Math.random() * 400);
     }
-    //barry.fillStyle = 'rgb(236, 78, 32)'
-    barry.fillRect(bx, by, 8, 8);
-}spawn();
 
-// barry.fillStyle = 'rgb(236, 78, 32)'
-// barry.rect(bx,by,16,16);
-// barry.fill();
+    barry.fillRect(bx, by, 16, 16);
+} spawn();
 
 let time = setInterval(function() {
+
+    if (x == bx && y == by) {
+        scoreContain.innerText = ++score;
+        spawn();
+    }
     //очистка предыдущего квадрата
-    clearing(x, y)
+    clearing(x, y);
 
     //движение змейки по х
     if (x > 400) {x = 0}
@@ -46,7 +51,6 @@ let time = setInterval(function() {
     if (y > 400) {y = 0}
     if (y < 0) {y = 400}
     y +=dy;
-    alert(bx);
 
     // заполнение нового квадрата
     filling(x, y, 16, 16);
