@@ -2,32 +2,31 @@ const canvas = document.getElementById('snake-frame');
 var scoreContain = document.getElementById('score');
 const ctx = canvas.getContext('2d');
 
-var score, count, snake, barry;
 var grid = 16;
-function reset() {
-    frame = {
-        width: 400,
-        height: 400
-    }
-    barry = {
-        x: 320,
-        y: 320
-    }
-    snake = {
-        x: 208,
-        y: 208,
-        dx: 0,
-        dy: 0,
-        tail: [
-            {x: 208, y: 224},
-            {x: 208, y: 240},
-        ],
-        maxtail: 2
-    }
-    score = 0;
-} reset();
+fps = 10;
+frame = {
+    width: 400,
+    height: 400
+}
+barry = {
+    x: 320,
+    y: 320
+}
+snake = {
+    x: 208,
+    y: 208,
+    dx: 0,
+    dy: 0,
+    tail: [
+        {x: 208, y: 208},
+        {x: 208, y: 224}
+    ],
+    maxtail: 3
+}
 
-function spawn() {
+score = 0;
+
+const bar = function barrySpawn() {
     barry.x = Math.floor(Math.random() * 400);
     while (barry.x % 16 != 0) {
         barry.x = Math.floor(Math.random() * 400);
@@ -37,75 +36,103 @@ function spawn() {
     while (barry.y % 16 != 0) {
         barry.y = Math.floor(Math.random() * 400);
     }
+    ctx.fillStyle = 'Red'
+    ctx.fillRect(barry.x, barry.y, grid, grid);
+}
+ctx.fillStyle = 'green'
+
+snake.tail.forEach(function(tail){
+    ctx.fillRect(tail.x, tail.y, grid, grid);
+})
+
+// Цикл игры.
+function loop() {
+
+    // Установка частоты кадров.
+    setTimeout(function() {
+
+        // Отложенный запуск игры.
+        requestAnimationFrame(loop)
+
+        // Очистить фрейм.
+        ctx.clearRect(0,0, frame.width, frame.height)
+
+        ctx.fillStyle = 'Red'
+        ctx.fillRect(barry.x, barry.y, grid, grid);
+
+        scoreContain.innerText = score
+
+        // Движение головы змейки.
+        snake.x += snake.dx
+        snake.y += snake.dy
+
+        // Проверка границ и телепорт змеюки в другой конец карты.
+        if (snake.x == frame.width) {
+            snake.x = 0
+        } else if (snake.x < 0) {
+            snake.x = frame.width
+        }
+        if (snake.y == frame.height) {
+            snake.y = 0;
+        } else if (snake.y < 0) {
+            snake.y = frame.height
+        }
+
+        // Добавить змее в начало текущие координаты
+        snake.tail.unshift({
+            x: snake.x,
+            y: snake.y
+        });
+
+        // Обрезать змею по последнему элементу, чтобы хвост фиксировался.
+        if (snake.tail.length > snake.maxtail) {
+            snake.tail.pop();
+        }
+
+        // Перебор змеи.
+        snake.tail.forEach(function(tail, index){
+
+            // Отрисовка змеюки.
+            ctx.fillStyle = 'green'
+            ctx.fillRect(tail.x, tail.y, grid, grid);
+
+            if (snake.x === barry.x && snake.y === barry.y) {
+                score++
+                snake.maxtail++
+                bar()
+            }
+            // Проверка на столкновение с самой собой.
+            for (let i = index + 1; i < snake.tail.length; i++) {
+                if (tail.x === snake.tail[i].x && tail.y === snake.tail[i].y) {
+                    /// окончание игры ///
+                    snake.x = 208
+                    snake.y = 208
+                    snake.tail = []
+                    snake.dx = 0
+                    snake.dy = 0
+                    snake.maxtail = 2
+                }
+            }
+        })
+
+        // Читалка кнопок - управление змейкой.
+        addEventListener('keydown', function(event) {
+            if (event.code == "ArrowUp") {
+                snake.dy = -16
+                snake.dx = 0
+            } else if (event.code == "ArrowDown") {
+                snake.dy = 16
+                snake.dx = 0
+            } else if (event.code == "ArrowRight") {
+                snake.dx  = 16
+                snake.dy = 0
+            } else if (event.code == "ArrowLeft") {
+                snake.dx = -16
+                snake.dy = 0
+            }
+        })
+    }, 1000 / fps)
 }
 
-var loop = setInterval(function() {
-    scoreContain.innerText = score;
-    ctx.clearRect(0,0, frame.width, frame.height);
-
-    snake.x += snake.dx;
-    snake.y += snake.dy;
-
-    if (snake.x == frame.width) {
-        snake.x = 0;
-    } else if (snake.x < 0) {
-        snake.x = frame.width;
-    }
-
-    if (snake.y == frame.height) {
-        snake.y = 0;
-    } else if (snake.y < 0) {
-        snake.y = frame.height;
-    }
-
-    // добавить в массив текущую координату головы змейки
-    snake.tail.unshift({
-        x: snake.x,
-        y: snake.y
-    });
-    // если длина змейки больше максимально возможной,
-    // удалять последний элемент в массиве
-    if (snake.tail.length > snake.maxtail) {
-        snake.tail.pop();
-    }
-
-    // отрисовывать ягоду
-    ctx.fillStyle = 'red',
-    ctx.fillRect(barry.x, barry.y, grid, grid);
-
-    // отрисовывать змейку
-    ctx.fillStyle = 'green'
-    // обработка каждовго элемента в массиве хвоста
-    snake.tail.forEach(function(tail){
-        ctx.fillRect(tail.x, tail.y, grid, grid);
-    })
-    if (snake.x == barry.x && snake.y == barry.y) {
-        score++;
-        snake.maxtail++;
-        spawn();
-        fillRect(barry.x, barry.y, grid, grid);
-    }
-
-
-    addEventListener('keydown', function(event) {
-        if (event.code == "ArrowUp") {
-            snake.dy = -16
-            snake.dx = 0
-        } else if (event.code == "ArrowDown") {
-            snake.dy = 16
-            snake.dx = 0
-        } else if (event.code == "ArrowRight") {
-            snake.dx  = 16
-            snake.dy = 0
-        } else if (event.code == "ArrowLeft") {
-            snake.dx = -16
-            snake.dy = 0
-        }for (let i = 0; i < snake.tail.length; i++) {
-
-    }
-
-    });
-    if (snake.x == snake.tail[i].x && snake.y == snake.tail[i].y) {
-        reset();
-    }
-},150);
+// Запуск змейки.
+requestAnimationFrame(loop)
