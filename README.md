@@ -16,7 +16,6 @@ $git ckeckout -b desktop-app origin/desktop-app
 <pre>npm start</pre>
 <p>Or use another way to build app and use <b>.exe</b> file whenever you want. Write this in project's terminal^</p>
 <pre>electron-builder</pre>
-<br>
-<p>find <b>snake.exe</b> in <span>\dist\win-unpacked</span><p>
+<p>Find <b>snake.exe</b> in <u>\dist\win-unpacked</span><u>
 <h2>Enjoy!</h2>
 <img src="https://github.com/Revilise/Snake/blob/customized/snake.gif">
