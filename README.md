@@ -4,7 +4,7 @@ SSSSnake!
 <p>Simple browser game</p>
 <br>
 <h2>How to play?</h2>
-<p>Clone files with</p>
+<p>Clone repos from <b>desktop-app</b> branch</p>
 <pre>
 $git clone https://github.com/Revilise/Snake.git
 cd Snake
