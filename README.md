@@ -9,7 +9,7 @@ SSSSnake!
 $git clone https://github.com/Revilise/Snake.git
 cd Snake
 $git branch
-$git ckeckout -b desktop-app origin/desktop-app
+$git checkout -b desktop-app origin/desktop-app
 </pre>
 <br>
 <p>Use follow string to run project</p>
