@@ -14,7 +14,7 @@ $git ckeckout -b desktop-app origin/desktop-app
 <br>
 <p>Use follow string to run project</p>
 <pre>npm start</pre>
-<p>Or use another way to build app and use <b>.exe</b> file whenever you want. Write this in project's terminal^</p>
+<p>Or use another way to build app and use <b>.exe</b> file whenever you want. Write this in project's terminal</p>
 <pre>electron-builder</pre>
 <p>Find <b>snake.exe</b> in \dist\win-unpacked
 <h2>Enjoy!</h2>
