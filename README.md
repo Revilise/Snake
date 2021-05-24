@@ -11,4 +11,6 @@ cd Snake
 $git branch
 $git ckeckout -b desktop-app origin/desktop-app
 </pre>
+<br>
+<h2>Enjoy!</h2>
 <img src="https://github.com/Revilise/Snake/blob/customized/snake.gif">
