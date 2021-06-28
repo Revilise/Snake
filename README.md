@@ -1,4 +1,5 @@
 <ul>
+  <li><a href="https://github.com/Revilise/Snake/tree/main">Default version</a></li>
   <li><a href="https://github.com/Revilise/Snake/tree/desktop-app">Desktop version</a></li>
   <li><a href="https://github.com/Revilise/Snake/tree/customizedp">Customized version (v.0.1)</a></li>
 </ul>
