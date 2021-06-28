@@ -1,3 +1,7 @@
+<ul>
+  <li><a href="https://github.com/Revilise/Snake/tree/desktop-app">Desktop version</a></li>
+</ul>
+
 <h2>
 SSSSnake!
 </h2>
