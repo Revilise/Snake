@@ -23,4 +23,4 @@ $git checkout -b customized origin/customized
 <br>
 <p>You don't need to install something else. Only turn on JavaScript in browser</p>
 <h2>Enjoy!</h2>
-<img src="https://github.com/Revilise/Snake/blob/customized/snake.gif">
+<img src="https://github.com/Revilise/Snake/blob/main/snake.gif">
