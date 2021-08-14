@@ -25,4 +25,4 @@ npm start</pre>
 <pre>electron-builder</pre>
 <p>Find <b>snake.exe</b> in \dist\win-unpacked</p>
 <h2>Enjoy!</h2>
-<img src="https://github.com/Revilise/Snake/blob/customized/snake.gif">
+<img src="https://github.com/Revilise/Snake/blob/main/snake.gif">
