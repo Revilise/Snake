@@ -1,138 +1,174 @@
-const canvas = document.getElementById('snake-frame');
-var scoreContain = document.getElementById('score');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("snake-frame");
+var scoreContain = document.getElementById("score");
+const ctx = canvas.getContext("2d");
 
-var grid = 16;
-fps = 10;
-frame = {
+const config = {
+  grid: 16,
+  fps: 10,
+  frame: {
     width: 400,
     height: 400
-}
-barry = {
+  },
+  barry: {
     x: 320,
     y: 320
-}
-snake = {
+  },
+  snake: {
     x: 208,
     y: 208,
     dx: 0,
     dy: 0,
-    tail: [
-        {x: 208, y: 208},
-        {x: 208, y: 224}
-    ],
-    maxtail: 3
-}
+    tail: [],
+    maxtail: 2
+  },
+  score: 0
+};
 
-score = 0;
-
-const bar = function barrySpawn() {
-    barry.x = Math.floor(Math.random() * 400);
-    while (barry.x % 16 != 0) {
-        barry.x = Math.floor(Math.random() * 400);
+function SnakeGame(config) {
+  this.BarrySpawn = () => {
+    this.barry.x = Math.floor(Math.random() * 400);
+    while (this.barry.x % 16 != 0) {
+      this.barry.x = Math.floor(Math.random() * 400);
+    }
+    this.barry.y = Math.floor(Math.random() * 400);
+    while (this.barry.y % 16 != 0) {
+      this.barry.y = Math.floor(Math.random() * 400);
     }
 
-    barry.y = Math.floor(Math.random() * 400);
-    while (barry.y % 16 != 0) {
-        barry.y = Math.floor(Math.random() * 400);
+    this.BarryDraw();
+  };
+
+  this.BarryDraw = () => {
+    ctx.fillStyle = "Red";
+    ctx.fillRect(this.barry.x, this.barry.y, this.grid, this.grid);
+  };
+
+  this.SnakeMove = () => {
+    // Движение головы змейки.
+    this.snake.x += this.snake.dx;
+    this.snake.y += this.snake.dy;
+
+    // Добавить в начало хвоста координату головы
+    this.snake.tail.unshift({
+      x: this.snake.x,
+      y: this.snake.y
+    });
+
+    this.FrameTeleport();
+
+    // Обрезать змею по последнему элементу, чтобы хвост фиксировался.
+    if (this.snake.tail.length > this.snake.maxtail) {
+      this.snake.tail.pop();
     }
-    ctx.fillStyle = 'Red'
-    ctx.fillRect(barry.x, barry.y, grid, grid);
+
+    //Перебор змейки
+    this.snake.tail.forEach((tail, index) => {
+      //Отрисовка тела
+      ctx.fillStyle = "green";
+      ctx.fillRect(tail.x, tail.y, this.grid, this.grid);
+
+      this.EatBarry();
+
+      // Проверка на столкновение змейки с самой собой.
+      for (let i = index + 1; i < this.snake.tail.length; i++) {
+        if (
+          tail.x === this.snake.tail[i].x &&
+          tail.y === this.snake.tail[i].y
+        ) {
+          this.ResetGame();
+        }
+      }
+    });
+  };
+
+  this.EatBarry = () => {
+    if (this.snake.x === this.barry.x && this.snake.y === this.barry.y) {
+      this.score++;
+      this.ChangeScore();
+
+      this.snake.maxtail++;
+      this.BarrySpawn();
+
+      // сразу перекрасить змейку в родной цвет.
+      ctx.fillStyle = "green";
+    }
+  };
+
+  this.ChangeScore = () => {
+    scoreContain.innerText = this.score;
+  };
+
+  this.ResetGame = () => {
+    let configCopy = {
+      ...config,
+      frame: { ...config.frame },
+      snake: { ...config.snake, tail: [...config.snake.tail] },
+      barry: { ...config.barry }
+    };
+
+    this.grid = configCopy.grid;
+    this.fps = configCopy.fps;
+    this.frame = configCopy.frame;
+    this.barry = configCopy.barry;
+    this.snake = configCopy.snake;
+    this.score = configCopy.score;
+    this.ChangeScore();
+  };
+
+  this.ClearFrame = () => {
+    ctx.clearRect(0, 0, this.frame.width, this.frame.height);
+  };
+
+  this.FrameTeleport = () => {
+    if (this.snake.x == this.frame.width) {
+      this.snake.x = 0;
+    } else if (this.snake.x < 0) {
+      this.snake.x = this.frame.width;
+    }
+    if (this.snake.y == this.frame.height) {
+      this.snake.y = 0;
+    } else if (this.snake.y < 0) {
+      this.snake.y = this.frame.height;
+    }
+  };
+
+  this.SnakeController = () => {
+    document.addEventListener("keydown", event => {
+      if (event.code == "ArrowUp") {
+        this.snake.dy = -16;
+        this.snake.dx = 0;
+      } else if (event.code == "ArrowDown") {
+        this.snake.dy = 16;
+        this.snake.dx = 0;
+      } else if (event.code == "ArrowRight") {
+        this.snake.dx = 16;
+        this.snake.dy = 0;
+      } else if (event.code == "ArrowLeft") {
+        this.snake.dx = -16;
+        this.snake.dy = 0;
+      }
+    });
+  };
+
+  this.loop = () => {
+    this.ClearFrame();
+    this.BarryDraw();
+    this.SnakeMove();
+
+    setTimeout(() => {
+      requestAnimationFrame(this.loop);
+    }, 1000 / this.fps);
+  };
+
+  //entry point
+  return () => {
+    this.ResetGame();
+    this.SnakeController();
+
+    return requestAnimationFrame(this.loop);
+  };
 }
-ctx.fillStyle = 'green'
 
-snake.tail.forEach(function(tail){
-    ctx.fillRect(tail.x, tail.y, grid, grid);
-})
+window.play = new SnakeGame(config);
 
-// Цикл игры.
-function loop() {
-
-    // Установка частоты кадров.
-    setTimeout(function() {
-
-        // Отложенный запуск игры.
-        requestAnimationFrame(loop)
-
-        // Очистить фрейм.
-        ctx.clearRect(0,0, frame.width, frame.height)
-
-        ctx.fillStyle = 'Red'
-        ctx.fillRect(barry.x, barry.y, grid, grid);
-
-        scoreContain.innerText = score
-
-        // Движение головы змейки.
-        snake.x += snake.dx
-        snake.y += snake.dy
-
-        // Проверка границ и телепорт змеюки в другой конец карты.
-        if (snake.x == frame.width) {
-            snake.x = 0
-        } else if (snake.x < 0) {
-            snake.x = frame.width
-        }
-        if (snake.y == frame.height) {
-            snake.y = 0;
-        } else if (snake.y < 0) {
-            snake.y = frame.height
-        }
-
-        // Добавить змее в начало текущие координаты
-        snake.tail.unshift({
-            x: snake.x,
-            y: snake.y
-        });
-
-        // Обрезать змею по последнему элементу, чтобы хвост фиксировался.
-        if (snake.tail.length > snake.maxtail) {
-            snake.tail.pop();
-        }
-
-        // Перебор змеи.
-        snake.tail.forEach(function(tail, index){
-
-            // Отрисовка змеюки.
-            ctx.fillStyle = 'green'
-            ctx.fillRect(tail.x, tail.y, grid, grid);
-
-            if (snake.x === barry.x && snake.y === barry.y) {
-                score++
-                snake.maxtail++
-                bar()
-            }
-            // Проверка на столкновение с самой собой.
-            for (let i = index + 1; i < snake.tail.length; i++) {
-                if (tail.x === snake.tail[i].x && tail.y === snake.tail[i].y) {
-                    /// окончание игры ///
-                    snake.x = 208
-                    snake.y = 208
-                    snake.tail = []
-                    snake.dx = 0
-                    snake.dy = 0
-                    snake.maxtail = 2
-                }
-            }
-        })
-
-        // Читалка кнопок - управление змейкой.
-        addEventListener('keydown', function(event) {
-            if (event.code == "ArrowUp") {
-                snake.dy = -16
-                snake.dx = 0
-            } else if (event.code == "ArrowDown") {
-                snake.dy = 16
-                snake.dx = 0
-            } else if (event.code == "ArrowRight") {
-                snake.dx  = 16
-                snake.dy = 0
-            } else if (event.code == "ArrowLeft") {
-                snake.dx = -16
-                snake.dy = 0
-            }
-        })
-    }, 1000 / fps)
-}
-
-// Запуск змейки.
-requestAnimationFrame(loop)
+play();
